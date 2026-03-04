@@ -111,7 +111,7 @@ st.markdown("---")
 # 👥 PERTANYAAN 2: FREKUENSI PEMBELIAN
 # ====================================================
 
-st.subheader("👥 Distribusi Frekuensi Pembelian Pelanggan")
+st.subheader("👥 Komposisi Pelanggan")
 
 customer_orders = pd.merge(
     orders_clean,
@@ -128,30 +128,26 @@ freq_df = (
 )
 
 repeat_customers = len(freq_df[freq_df["total_orders"] > 1])
+one_time_customers = len(freq_df[freq_df["total_orders"] == 1])
 total_unique = len(freq_df)
+
 percentage_repeat = (repeat_customers / total_unique) * 100 if total_unique > 0 else 0
 
 st.metric("Repeat Buyer Percentage", f"{percentage_repeat:.2f}%")
 
-# ====== DISTRIBUTION PLOT ======
-fig2, ax2 = plt.subplots(figsize=(8,4))
+# ===== PIE CHART =====
+fig2, ax2 = plt.subplots(figsize=(6,6))
 
-sns.kdeplot(
-    data=freq_df,
-    x="total_orders",
-    fill=True,
-    ax=ax2
+labels = ["One-Time Buyer", "Repeat Buyer"]
+sizes = [one_time_customers, repeat_customers]
+
+ax2.pie(
+    sizes,
+    labels=labels,
+    autopct="%1.1f%%",
+    startangle=90
 )
 
-ax2.set_title("Distribusi Frekuensi Pembelian")
-ax2.set_xlabel("Jumlah Order")
-ax2.set_ylabel("Density")
+ax2.set_title("Komposisi Repeat vs One-Time Buyer")
 
 st.pyplot(fig2)
-
-
-
-
-
-
-
