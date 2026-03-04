@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 st.set_page_config(page_title="E-Commerce Dashboard", layout="wide")
-
 st.title("📊 E-Commerce Business Dashboard")
 
 # =========================
@@ -13,9 +12,9 @@ st.title("📊 E-Commerce Business Dashboard")
 
 @st.cache_data
 def load_data():
-    orders = pd.read_csv("orders_dataset.csv", sep=None, engine="python")
-    payments = pd.read_csv("order_payments_dataset.csv", sep=None, engine="python")
-    customers = pd.read_csv("customers_dataset.csv", sep=None, engine="python")
+    orders = pd.read_csv("orders_dataset.csv", sep=';')
+    payments = pd.read_csv("order_payments_dataset.csv", sep=';')
+    customers = pd.read_csv("customers_dataset.csv")
 
     orders.columns = orders.columns.str.strip()
     payments.columns = payments.columns.str.strip()
@@ -26,14 +25,15 @@ def load_data():
 orders_df, payments_df, customers_df = load_data()
 
 # =========================
-# FILTER DELIVERED ONLY
+# DATA CLEANING (SAMA SEPERTI NOTEBOOK)
 # =========================
+
+orders_df["order_purchase_timestamp"] = pd.to_datetime(
+    orders_df["order_purchase_timestamp"],
+    format="%d/%m/%Y %H:%M"
+)
 
 orders_clean = orders_df[orders_df["order_status"] == "delivered"]
-
-# =========================
-# MERGE FOR REVENUE
-# =========================
 
 revenue_df = pd.merge(
     orders_clean,
@@ -43,41 +43,75 @@ revenue_df = pd.merge(
 )
 
 # =========================
-# OVERVIEW METRICS
+# SIDEBAR FILTER
+# =========================
+
+st.sidebar.header("🔎 Filter Data")
+
+min_date = revenue_df["order_purchase_timestamp"].min()
+max_date = revenue_df["order_purchase_timestamp"].max()
+
+date_range = st.sidebar.date_input(
+    "Pilih Rentang Tanggal",
+    [min_date, max_date]
+)
+
+if len(date_range) == 2:
+    start_date, end_date = date_range
+    revenue_df = revenue_df[
+        (revenue_df["order_purchase_timestamp"] >= pd.to_datetime(start_date)) &
+        (revenue_df["order_purchase_timestamp"] <= pd.to_datetime(end_date))
+    ]
+    orders_clean = orders_clean[
+        (orders_clean["order_purchase_timestamp"] >= pd.to_datetime(start_date)) &
+        (orders_clean["order_purchase_timestamp"] <= pd.to_datetime(end_date))
+    ]
+
+# =========================
+# METRICS OVERVIEW
 # =========================
 
 total_revenue = revenue_df["payment_value"].sum()
 total_orders = revenue_df["order_id"].nunique()
-total_customers = orders_clean["customer_id"].nunique()
 
-col1, col2, col3 = st.columns(3)
-
+col1, col2 = st.columns(2)
 col1.metric("Total Revenue", f"${total_revenue:,.0f}")
 col2.metric("Total Orders", total_orders)
-col3.metric("Total Customers", total_customers)
 
 st.markdown("---")
 
-# =========================
-# PAYMENT METHOD ANALYSIS
-# =========================
+# ====================================================
+# 📈 PERTANYAAN 1: TREN REVENUE BULANAN
+# ====================================================
 
-st.subheader("💳 Payment Method Distribution")
+st.subheader("📈 Tren Revenue Bulanan")
 
-payment_counts = revenue_df["payment_type"].value_counts()
+revenue_df["year_month"] = revenue_df["order_purchase_timestamp"].dt.to_period("M")
 
-fig1, ax1 = plt.subplots()
-payment_counts.plot(kind="bar", ax=ax1)
-ax1.set_title("Payment Method Usage")
+monthly_revenue = (
+    revenue_df
+    .groupby("year_month")["payment_value"]
+    .sum()
+    .reset_index()
+)
+
+monthly_revenue["year_month"] = monthly_revenue["year_month"].astype(str)
+
+fig1, ax1 = plt.subplots(figsize=(12,5))
+ax1.plot(monthly_revenue["year_month"],
+         monthly_revenue["payment_value"])
+ax1.set_xticklabels(monthly_revenue["year_month"], rotation=45)
+ax1.set_title("Tren Revenue Bulanan")
+ax1.set_ylabel("Total Revenue")
 st.pyplot(fig1)
 
 st.markdown("---")
 
-# =========================
-# CUSTOMER BEHAVIOR
-# =========================
+# ====================================================
+# 👥 PERTANYAAN 2: FREKUENSI PEMBELIAN
+# ====================================================
 
-st.subheader("👥 Customer Purchase Frequency")
+st.subheader("👥 Distribusi Frekuensi Pembelian Pelanggan")
 
 customer_orders = pd.merge(
     orders_clean,
@@ -99,25 +133,8 @@ percentage_repeat = (repeat_customers / total_unique) * 100 if total_unique > 0 
 
 st.metric("Repeat Buyer Percentage", f"{percentage_repeat:.2f}%")
 
-fig2, ax2 = plt.subplots()
+fig2, ax2 = plt.subplots(figsize=(8,4))
 sns.histplot(freq_df["total_orders"], bins=10, ax=ax2)
-ax2.set_title("Distribution of Purchase Frequency")
+ax2.set_title("Distribusi Frekuensi Pembelian")
+ax2.set_xlabel("Jumlah Order")
 st.pyplot(fig2)
-
-st.markdown("---")
-
-# =========================
-# CUSTOMER LOCATION
-# =========================
-
-st.subheader("🌍 Top 10 Customer Cities")
-
-city_counts = customers_df["customer_city"].value_counts().head(10)
-
-fig3, ax3 = plt.subplots()
-city_counts.plot(kind="barh", ax=ax3)
-ax3.set_title("Top 10 Cities by Number of Customers")
-st.pyplot(fig3)
-
-
-
