@@ -10,11 +10,11 @@ st.title("📊 E-Commerce Business Dashboard")
 # LOAD DATA
 # =========================
 
-@st.cache_data
+@@st.cache_data
 def load_data():
     orders = pd.read_csv("orders_dataset.csv", sep=';')
     payments = pd.read_csv("order_payments_dataset.csv", sep=';')
-    customers = pd.read_csv("customers_dataset.csv")
+    customers = pd.read_csv("customers_dataset.csv", sep=';')  # ✅ FIX
 
     orders.columns = orders.columns.str.strip()
     payments.columns = payments.columns.str.strip()
@@ -138,3 +138,4 @@ sns.histplot(freq_df["total_orders"], bins=10, ax=ax2)
 ax2.set_title("Distribusi Frekuensi Pembelian")
 ax2.set_xlabel("Jumlah Order")
 st.pyplot(fig2)
+
