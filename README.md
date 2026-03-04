@@ -1,19 +1,57 @@
-# :earth_americas: GDP dashboard template
+# E-Commerce Business Dashboard ✨
 
-A simple Streamlit app showing the GDP of different countries in the world.
+------------------------------------------------------------------------
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://gdp-dashboard-template.streamlit.app/)
+## Setup Environment - Anaconda
 
-### How to run it on your own machine
+    conda create --name ecommerce-ds python=3.9
+    conda activate ecommerce-ds
+    pip install -r requirements.txt
 
-1. Install the requirements
+------------------------------------------------------------------------
 
-   ```
-   $ pip install -r requirements.txt
-   ```
+## Setup Environment - Shell/Terminal
 
-2. Run the app
+    mkdir Anindya_Septyani_Proyek_Analisis_Data
+    cd Anindya_Septyani_Proyek_Analisis_Data
+    pip install -r requirements.txt
 
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+------------------------------------------------------------------------
+
+## Run Streamlit App
+
+    streamlit run app.py
+
+Setelah menjalankan perintah di atas, dashboard akan tersedia pada:
+
+    http://localhost:8501
+
+Buka link tersebut di browser untuk melihat dashboard
+
+------------------------------------------------------------------------
+
+## Project Structure
+
+    Anindya_Septyani_Proyek_Analisis_Data/
+    │
+    ├── app.py
+    ├── orders_dataset.csv
+    ├── order_payments_dataset.csv
+    ├── customers_dataset.csv
+    ├── requirements.txt
+    └── README.md
+
+------------------------------------------------------------------------
+
+## Business Questions
+
+1.  Bagaimana distribusi metode pembayaran pelanggan?
+2.  Bagaimana perilaku pembelian pelanggan berdasarkan frekuensi
+    transaksi dan repeat buyer?
+
+------------------------------------------------------------------------
+
+## Author
+
+Anindya Septyani\
+Final Submission Belajar Fundamental Analisis Data -- IDCamp 2026
