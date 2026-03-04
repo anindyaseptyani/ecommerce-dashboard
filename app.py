@@ -111,7 +111,7 @@ st.markdown("---")
 # 👥 PERTANYAAN 2: FREKUENSI PEMBELIAN
 # ====================================================
 
-st.subheader("👥 Distribusi Frekuensi Pembelian Pelanggan")
+t.subheader("👥 Distribusi Frekuensi Pembelian Pelanggan")
 
 customer_orders = pd.merge(
     orders_clean,
@@ -133,10 +133,23 @@ percentage_repeat = (repeat_customers / total_unique) * 100 if total_unique > 0 
 
 st.metric("Repeat Buyer Percentage", f"{percentage_repeat:.2f}%")
 
+# ====== DISTRIBUTION PLOT ======
 fig2, ax2 = plt.subplots(figsize=(8,4))
-sns.histplot(freq_df["total_orders"], bins=10, ax=ax2)
+
+sns.kdeplot(
+    data=freq_df,
+    x="total_orders",
+    fill=True,
+    ax=ax2
+)
+
 ax2.set_title("Distribusi Frekuensi Pembelian")
 ax2.set_xlabel("Jumlah Order")
-st.pyplot(fig2)
+ax2.set_ylabel("Density")
+
+st.pyplot(fig2))
+
+
+
 
 
