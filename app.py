@@ -13,9 +13,9 @@ st.title("📊 E-Commerce Business Dashboard")
 
 @st.cache_data
 def load_data():
-    orders = pd.read_csv("orders_dataset.csv", sep=";")
-    payments = pd.read_csv("order_payments_dataset.csv", sep=";")
-    customers = pd.read_csv("customers_dataset.csv", sep=",")
+    orders = pd.read_csv("orders_dataset.csv")
+    payments = pd.read_csv("order_payments_dataset.csv")
+    customers = pd.read_csv("customers_dataset.csv")
 
     orders.columns = orders.columns.str.strip()
     payments.columns = payments.columns.str.strip()
@@ -24,12 +24,6 @@ def load_data():
     return orders, payments, customers
 
 orders_df, payments_df, customers_df = load_data()
-
-st.write("Kolom orders_df:")
-st.write(list(orders_df.columns))
-
-st.write("Preview data:")
-st.write(orders_df.head())
 
 # =========================
 # FILTER DELIVERED ONLY
@@ -75,7 +69,6 @@ payment_counts = revenue_df["payment_type"].value_counts()
 fig1, ax1 = plt.subplots()
 payment_counts.plot(kind="bar", ax=ax1)
 ax1.set_title("Payment Method Usage")
-
 st.pyplot(fig1)
 
 st.markdown("---")
@@ -102,15 +95,13 @@ freq_df = (
 
 repeat_customers = len(freq_df[freq_df["total_orders"] > 1])
 total_unique = len(freq_df)
-percentage_repeat = (repeat_customers / total_unique) * 100
+percentage_repeat = (repeat_customers / total_unique) * 100 if total_unique > 0 else 0
 
 st.metric("Repeat Buyer Percentage", f"{percentage_repeat:.2f}%")
 
 fig2, ax2 = plt.subplots()
 sns.histplot(freq_df["total_orders"], bins=10, ax=ax2)
-ax2.set_xlim(0, 10)
 ax2.set_title("Distribution of Purchase Frequency")
-
 st.pyplot(fig2)
 
 st.markdown("---")
@@ -126,5 +117,4 @@ city_counts = customers_df["customer_city"].value_counts().head(10)
 fig3, ax3 = plt.subplots()
 city_counts.plot(kind="barh", ax=ax3)
 ax3.set_title("Top 10 Cities by Number of Customers")
-
 st.pyplot(fig3)
