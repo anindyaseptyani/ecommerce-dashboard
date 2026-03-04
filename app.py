@@ -13,9 +13,9 @@ st.title("📊 E-Commerce Business Dashboard")
 
 @st.cache_data
 def load_data():
-    orders = pd.read_csv("orders_dataset.csv")
-    payments = pd.read_csv("order_payments_dataset.csv")
-    customers = pd.read_csv("customers_dataset.csv")
+    orders = pd.read_csv("orders_dataset.csv", sep=";")
+    payments = pd.read_csv("order_payments_dataset.csv", sep=";")
+    customers = pd.read_csv("customers_dataset.csv", sep=",")
 
     orders.columns = orders.columns.str.strip()
     payments.columns = payments.columns.str.strip()
@@ -118,3 +118,4 @@ fig3, ax3 = plt.subplots()
 city_counts.plot(kind="barh", ax=ax3)
 ax3.set_title("Top 10 Cities by Number of Customers")
 st.pyplot(fig3)
+
