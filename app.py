@@ -147,7 +147,8 @@ ax2.set_title("Distribusi Frekuensi Pembelian")
 ax2.set_xlabel("Jumlah Order")
 ax2.set_ylabel("Density")
 
-st.pyplot(fig2))
+st.pyplot(fig2)
+
 
 
 
