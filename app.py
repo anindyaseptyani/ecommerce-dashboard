@@ -111,7 +111,7 @@ st.markdown("---")
 # 👥 PERTANYAAN 2: FREKUENSI PEMBELIAN
 # ====================================================
 
-t.subheader("👥 Distribusi Frekuensi Pembelian Pelanggan")
+st.subheader("👥 Distribusi Frekuensi Pembelian Pelanggan")
 
 customer_orders = pd.merge(
     orders_clean,
@@ -148,6 +148,7 @@ ax2.set_xlabel("Jumlah Order")
 ax2.set_ylabel("Density")
 
 st.pyplot(fig2)
+
 
 
 
